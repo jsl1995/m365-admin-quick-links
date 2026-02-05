@@ -88,6 +88,13 @@ function initWizard() {
   const $wizardDone = document.getElementById('wizard-done');
   const checkboxes = $setupWizard.querySelectorAll('.wizard-option input[type="checkbox"]');
   
+  console.log('initWizard called', { $wizardSelectAll, $wizardDone, checkboxes: checkboxes.length });
+  
+  if (!$wizardDone) {
+    console.error('wizard-done button not found!');
+    return;
+  }
+  
   // Update select all button text
   function updateSelectAllBtn() {
     const allChecked = [...checkboxes].every(cb => cb.checked);
@@ -103,22 +110,22 @@ function initWizard() {
   });
   
   $wizardDone.addEventListener('click', () => {
+    console.log('Get Started clicked');
     // Get unchecked sections
     const uncheckedSections = [...checkboxes]
       .filter(cb => !cb.checked)
       .map(cb => cb.value);
     
+    console.log('Unchecked sections:', uncheckedSections);
     hiddenSections = uncheckedSections;
     
-    // Save and close wizard
+    // Save and close wizard, then reload to initialize properly
     chrome.storage.sync.set({ 
       setupComplete: true,
       hiddenSections: hiddenSections
     }, () => {
-      $setupWizard.hidden = true;
-      applyHiddenSections();
-      applySectionOrder();
-      updateOpenMode();
+      console.log('Storage saved, reloading');
+      location.reload();
     });
   });
 }
