@@ -101,7 +101,10 @@ Access the settings panel to configure:
 - Display mode (Popup / Side Panel)
 - Link opening behavior (New Tab / Current Tab)
 - Section sorting (Manual / Alphabetical)
+- **Manage Sections** - Show/hide default sections based on your needs
 - Reset section order
+
+![Manage Sections](screenshots/manage-sections.png)
 
 ## 📥 Installation
 
@@ -161,6 +164,10 @@ Click the **🌙** / **☀️** button to toggle between light and dark themes.
 | Settings | Side Panel |
 |----------|------------|
 | ![Settings](screenshots/screenshot-3.png) | ![Side Panel](screenshots/screenshot-4.png) |
+
+| Manage Sections |
+|-----------------|
+| ![Manage Sections](screenshots/manage-sections.png) |
 
 ## 🔒 Permissions
 
