@@ -7,6 +7,48 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
+  <!-- Setup Wizard -->
+  <div id="setup-wizard" class="wizard-overlay" hidden>
+    <div class="wizard">
+      <h2>👋 Welcome!</h2>
+      <p>Choose which sections you'd like to display. You can always change this later in Settings.</p>
+      <div class="wizard-sections">
+        <label class="wizard-option">
+          <input type="checkbox" value="power-platform" checked>
+          <span>⚡ Power Platform</span>
+        </label>
+        <label class="wizard-option">
+          <input type="checkbox" value="m365-admin" checked>
+          <span>🛡️ M365 Admin</span>
+        </label>
+        <label class="wizard-option">
+          <input type="checkbox" value="sharepoint" checked>
+          <span>📁 SharePoint</span>
+        </label>
+        <label class="wizard-option">
+          <input type="checkbox" value="azure" checked>
+          <span>☁️ Azure</span>
+        </label>
+        <label class="wizard-option">
+          <input type="checkbox" value="dynamics" checked>
+          <span>📊 Dynamics 365</span>
+        </label>
+        <label class="wizard-option">
+          <input type="checkbox" value="developer" checked>
+          <span>🛠️ Developer Tools</span>
+        </label>
+        <label class="wizard-option">
+          <input type="checkbox" value="copilot" checked>
+          <span>🤖 Copilot</span>
+        </label>
+      </div>
+      <div class="wizard-actions">
+        <button id="wizard-select-all" class="btn-secondary">Select All</button>
+        <button id="wizard-done" class="btn-primary">Get Started</button>
+      </div>
+    </div>
+  </div>
+
   <header>
     <h1>🔗 Admin Quick Links</h1>
     <div class="header-actions">
@@ -40,6 +82,9 @@
         <option value="manual">Manual (drag to reorder)</option>
         <option value="alpha">Alphabetical (A-Z)</option>
       </select>
+    </div>
+    <div class="setting-row">
+      <button id="btn-manage-sections" class="btn-secondary">Manage Sections</button>
     </div>
     <div class="setting-row">
       <button id="btn-reset-order" class="btn-secondary">Reset Section Order</button>

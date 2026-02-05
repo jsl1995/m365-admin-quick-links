@@ -466,3 +466,132 @@ footer .hint {
 .suggest-link:hover {
   color: var(--accent);
 }
+
+/* Setup Wizard */
+.wizard-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.wizard {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 300px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.wizard h2 {
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.wizard p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.wizard-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.wizard-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.wizard-option:hover {
+  border-color: var(--accent);
+}
+
+.wizard-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.wizard-option span {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.wizard-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.wizard-actions button {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+/* Manage Sections Modal */
+.manage-sections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.manage-section-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.manage-section-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.manage-section-item span {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.manage-section-item.hidden-section {
+  opacity: 0.6;
+}
+
+.manage-section-item.hidden-section span {
+  text-decoration: line-through;
+}

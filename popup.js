@@ -8,19 +8,40 @@ const $displayMode = document.getElementById('display-mode');
 const $openMode = document.getElementById('open-mode');
 const $sortMode = document.getElementById('sort-mode');
 const $btnResetOrder = document.getElementById('btn-reset-order');
+const $btnManageSections = document.getElementById('btn-manage-sections');
 const $hint = document.getElementById('open-mode-hint');
 const $main = document.querySelector('main');
+const $setupWizard = document.getElementById('setup-wizard');
 let $links = document.querySelectorAll('.link-group a');
+
+// Default sections definition
+const DEFAULT_SECTIONS = [
+  { id: 'power-platform', name: 'Power Platform', emoji: '⚡' },
+  { id: 'm365-admin', name: 'M365 Admin', emoji: '🛡️' },
+  { id: 'sharepoint', name: 'SharePoint', emoji: '📁' },
+  { id: 'azure', name: 'Azure', emoji: '☁️' },
+  { id: 'dynamics', name: 'Dynamics 365', emoji: '📊' },
+  { id: 'developer', name: 'Developer Tools', emoji: '🛠️' },
+  { id: 'copilot', name: 'Copilot', emoji: '🤖' }
+];
 
 // State
 let openInNewTab = true;
 let sectionOrder = [];
 let sortMode = 'manual'; // 'manual', 'alpha-az', 'alpha-za'
 let customSections = []; // { id, name, emoji, links: [{title, url}] }
+let hiddenSections = []; // Array of section IDs that are hidden
 let draggedSection = null;
 
 // Load saved preferences
-chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMode', 'sortMode', 'customSections'], (result) => {
+chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMode', 'sortMode', 'customSections', 'hiddenSections', 'setupComplete'], (result) => {
+  // Check if first run - show wizard
+  if (!result.setupComplete) {
+    $setupWizard.hidden = false;
+    initWizard();
+    return;
+  }
+  
   // Dark mode
   if (result.darkMode) {
     document.body.classList.add('dark');
@@ -48,6 +69,10 @@ chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMod
   customSections = result.customSections || [];
   renderCustomSections();
   
+  // Hidden sections
+  hiddenSections = result.hiddenSections || [];
+  applyHiddenSections();
+  
   // Section order
   if (result.sectionOrder && result.sectionOrder.length > 0) {
     sectionOrder = result.sectionOrder;
@@ -56,6 +81,57 @@ chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMod
   // Apply ordering
   applySectionOrder();
 });
+
+// === Setup Wizard ===
+function initWizard() {
+  const $wizardSelectAll = document.getElementById('wizard-select-all');
+  const $wizardDone = document.getElementById('wizard-done');
+  const checkboxes = $setupWizard.querySelectorAll('.wizard-option input[type="checkbox"]');
+  
+  // Update select all button text
+  function updateSelectAllBtn() {
+    const allChecked = [...checkboxes].every(cb => cb.checked);
+    $wizardSelectAll.textContent = allChecked ? 'Deselect All' : 'Select All';
+  }
+  
+  checkboxes.forEach(cb => cb.addEventListener('change', updateSelectAllBtn));
+  
+  $wizardSelectAll.addEventListener('click', () => {
+    const allChecked = [...checkboxes].every(cb => cb.checked);
+    checkboxes.forEach(cb => cb.checked = !allChecked);
+    updateSelectAllBtn();
+  });
+  
+  $wizardDone.addEventListener('click', () => {
+    // Get unchecked sections
+    const uncheckedSections = [...checkboxes]
+      .filter(cb => !cb.checked)
+      .map(cb => cb.value);
+    
+    hiddenSections = uncheckedSections;
+    
+    // Save and close wizard
+    chrome.storage.sync.set({ 
+      setupComplete: true,
+      hiddenSections: hiddenSections
+    }, () => {
+      $setupWizard.hidden = true;
+      applyHiddenSections();
+      applySectionOrder();
+      updateOpenMode();
+    });
+  });
+}
+
+// Apply hidden sections
+function applyHiddenSections() {
+  DEFAULT_SECTIONS.forEach(section => {
+    const el = document.querySelector(`.link-group[data-group="${section.id}"]`);
+    if (el) {
+      el.style.display = hiddenSections.includes(section.id) ? 'none' : '';
+    }
+  });
+}
 
 // Toggle dark mode
 $btnDarkMode.addEventListener('click', () => {
@@ -148,6 +224,61 @@ $btnResetOrder.addEventListener('click', () => {
     location.reload();
   });
 });
+
+// Manage Sections
+$btnManageSections.addEventListener('click', () => {
+  showManageSectionsModal();
+});
+
+function showManageSectionsModal() {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  
+  const sectionsHtml = DEFAULT_SECTIONS.map(section => {
+    const isHidden = hiddenSections.includes(section.id);
+    return `
+      <label class="manage-section-item ${isHidden ? 'hidden-section' : ''}">
+        <input type="checkbox" value="${section.id}" ${!isHidden ? 'checked' : ''}>
+        <span>${section.emoji} ${section.name}</span>
+      </label>
+    `;
+  }).join('');
+  
+  modal.innerHTML = `
+    <div class="modal">
+      <h3>📋 Manage Sections</h3>
+      <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">
+        Toggle which default sections are visible.
+      </p>
+      <div class="manage-sections-list">
+        ${sectionsHtml}
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="manage-cancel">Cancel</button>
+        <button class="btn-primary" id="manage-save">Save</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  modal.querySelector('#manage-cancel').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  
+  modal.querySelector('#manage-save').addEventListener('click', () => {
+    const checkboxes = modal.querySelectorAll('.manage-section-item input[type="checkbox"]');
+    hiddenSections = [...checkboxes]
+      .filter(cb => !cb.checked)
+      .map(cb => cb.value);
+    
+    chrome.storage.sync.set({ hiddenSections }, () => {
+      applyHiddenSections();
+      applySectionOrder();
+      updateOpenMode();
+      modal.remove();
+    });
+  });
+}
 
 function updateOpenMode() {
   $hint.textContent = openInNewTab ? 'Click to open in new tab' : 'Click to open in current tab';
