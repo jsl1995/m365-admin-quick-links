@@ -452,3 +452,17 @@ footer .hint {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
 }
+
+/* Suggest link */
+.suggest-link {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-bottom: 4px;
+  transition: color 0.15s;
+}
+
+.suggest-link:hover {
+  color: var(--accent);
+}
