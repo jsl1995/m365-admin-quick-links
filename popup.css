@@ -32,7 +32,9 @@ body {
   line-height: 1.5;
   background: var(--bg);
   color: var(--text);
-  width: 320px;
+  min-width: 320px;
+  max-width: 100%;
+  width: 100%;
   max-height: 600px;
   overflow-y: auto;
 }
