@@ -1,0 +1,454 @@
+:root {
+  --bg: #ffffff;
+  --bg-section: #f8fafc;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --link: #3b82f6;
+  --link-hover: #2563eb;
+}
+
+body.dark {
+  --bg: #0f172a;
+  --bg-section: #1e293b;
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+  --link: #60a5fa;
+  --link-hover: #93c5fd;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+  width: 320px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-section);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.icon-btn:hover {
+  background: var(--border);
+}
+
+.icon-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+.icon-btn.active:hover {
+  background: var(--accent-hover);
+}
+
+main {
+  padding: 8px;
+}
+
+/* Settings Panel */
+.settings-panel {
+  padding: 12px 16px;
+  background: var(--bg-section);
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-panel h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.setting-row label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.setting-row select {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.setting-row select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn-secondary {
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-secondary:hover {
+  background: var(--border);
+  border-color: var(--text-secondary);
+}
+
+.setting-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.link-group {
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+
+.link-group.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.link-group.drag-over {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.link-group h2 {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 12px 6px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: grab;
+}
+
+.link-group h2:active {
+  cursor: grabbing;
+}
+
+.link-group.no-drag h2 {
+  cursor: default;
+}
+
+.link-group.no-drag .drag-handle {
+  opacity: 0.3;
+}
+
+.drag-handle {
+  color: var(--border);
+  font-size: 10px;
+  letter-spacing: -2px;
+  transition: color 0.15s;
+  user-select: none;
+}
+
+.link-group:hover .drag-handle {
+  color: var(--text-secondary);
+}
+
+.link-group ul {
+  list-style: none;
+}
+
+.link-group li {
+  border-top: 1px solid var(--border);
+}
+
+.link-group li:first-child {
+  border-top: none;
+}
+
+.link-group a {
+  display: block;
+  padding: 10px 12px;
+  color: var(--link);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+}
+
+.link-group a:hover {
+  background: var(--bg);
+  color: var(--link-hover);
+}
+
+.link-group a::after {
+  content: attr(href);
+  position: absolute;
+  bottom: 100%;
+  left: 12px;
+  right: 12px;
+  background: var(--text);
+  color: var(--bg);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.link-group a:hover::after {
+  opacity: 1;
+}
+
+.link-group a.hint {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+footer {
+  padding: 8px 16px 12px;
+  text-align: center;
+}
+
+footer .hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 280px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+}
+
+.modal h3 {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.modal-field {
+  margin-bottom: 12px;
+}
+
+.modal-field label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-field input,
+.modal-field select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-section);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.modal-field input:focus,
+.modal-field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-cancel {
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.btn-cancel:hover {
+  background: var(--border);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+/* Custom section styling */
+.link-group.custom-section h2 {
+  color: var(--accent);
+}
+
+/* Delete link button */
+.link-item {
+  display: flex;
+  align-items: center;
+}
+
+.link-item a {
+  flex: 1;
+}
+
+.btn-delete-link {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  font-size: 12px;
+}
+
+.link-item:hover .btn-delete-link {
+  opacity: 1;
+}
+
+.btn-delete-link:hover {
+  color: #ef4444;
+}
+
+/* Section header with delete */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+}
+
+.section-header h2 {
+  flex: 1;
+}
+
+.btn-delete-section {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 4px 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.link-group.custom-section:hover .btn-delete-section {
+  opacity: 1;
+}
+
+.btn-delete-section:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}

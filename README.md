@@ -1,0 +1,156 @@
+# M365 Admin Quick Links
+
+![Logo](logo.png)
+
+A Chrome extension providing quick access to essential Microsoft 365 and Power Platform admin portals. Save time navigating between admin centers with one-click access to all your frequently used Microsoft portals.
+
+![Screenshot](screenshots/screenshot-1.png)
+
+## ✨ Features
+
+### 🔗 Pre-configured Admin Portal Links
+Instant access to essential Microsoft admin portals organized by category:
+
+- **⚡ Power Platform** - Power Apps, Power Automate, Copilot Studio, Power Pages, Admin Center
+- **🛡️ M365 Admin** - Microsoft 365 Admin, Entra, Defender, Purview, Exchange, Teams, OneDrive
+- **📁 SharePoint** - SharePoint Admin Center, Tenant Lookup
+- **☁️ Azure** - Azure Portal, DevOps, AI Studio, OpenAI Studio
+- **📊 Dynamics 365** - Dynamics Home, Admin Center
+- **🛠️ Developer Tools** - Graph Explorer, JWT Decoder, Connector Reference, Docs, Service Health
+- **🤖 Copilot** - Microsoft Copilot, Copilot Studio, Copilot Admin
+
+### ➕ Custom Sections & Links
+Add your own frequently used links organized into custom sections:
+- Click the **➕** button to add the current tab as a link
+- Create new sections with custom names and emojis
+- Add links to existing custom sections
+- Remove individual links or entire sections
+
+![Add Link](screenshots/add-link.png)
+
+### 🎨 Display Options
+- **Dark Mode** - Toggle between light and dark themes
+- **Popup or Side Panel** - Use as a popup or pin as a side panel
+- **Drag & Drop Reordering** - Arrange sections in your preferred order
+- **Alphabetical Sorting** - Sort sections A-Z or Z-A
+
+### ⚙️ Settings
+Access the settings panel to configure:
+- Display mode (Popup / Side Panel)
+- Link opening behavior (New Tab / Current Tab)
+- Section sorting (Manual / Alphabetical)
+- Reset section order
+
+## 📥 Installation
+
+### From Source (Developer Mode)
+1. Download or clone this repository
+2. Open Chrome and navigate to `chrome://extensions/`
+3. Enable **Developer mode** (toggle in top right)
+4. Click **Load unpacked**
+5. Select the extension folder
+
+### From Chrome Web Store
+*Coming soon*
+
+## 🚀 Usage
+
+### Opening the Extension
+- **As Popup**: Click the extension icon in your toolbar
+- **As Side Panel**: Enable in settings, then click the extension icon
+
+### Adding Custom Links
+
+1. Navigate to the page you want to save
+2. Click the extension icon to open it
+3. Click the **➕** button in the header
+4. The current page's title and URL will be pre-filled
+5. Choose to create a new section or add to an existing one
+6. If creating a new section:
+   - Enter a section name (e.g., "My Favorites")
+   - Add an emoji (e.g., ⭐)
+7. Click **Add Link**
+
+![Adding a custom link](screenshots/add-link.png)
+
+### Managing Custom Sections
+
+- **Reorder sections**: Drag sections by their header to rearrange
+- **Delete a link**: Hover over a link in a custom section and click ✕
+- **Delete a section**: Hover over a custom section header and click 🗑️
+
+### Sorting Sections
+
+- Click the **🔤** button to cycle through sort modes:
+  - Manual (drag to reorder)
+  - Alphabetical A-Z
+  - Alphabetical Z-A
+
+### Dark Mode
+
+Click the **🌙** / **☀️** button to toggle between light and dark themes.
+
+## 📸 Screenshots
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Light](screenshots/screenshot-1.png) | ![Dark](screenshots/screenshot-2.png) |
+
+| Settings | Side Panel |
+|----------|------------|
+| ![Settings](screenshots/screenshot-3.png) | ![Side Panel](screenshots/screenshot-4.png) |
+
+## 🔒 Permissions
+
+This extension requires the following permissions:
+
+- **storage** - Save your preferences and custom links
+- **sidePanel** - Enable side panel display mode
+- **tabs** - Read current tab URL/title when adding custom links
+
+## 🛠️ Development
+
+### Project Structure
+```
+m365-links/
+├── manifest.json      # Extension configuration
+├── popup.html         # Main popup UI
+├── popup.css          # Styles (light/dark themes)
+├── popup.js           # Main application logic
+├── sidepanel.html     # Side panel UI
+├── background.js      # Service worker for display mode switching
+├── icons/             # Extension icons
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── screenshots/       # Documentation screenshots
+└── README.md
+```
+
+### Building
+No build step required - this is a vanilla JavaScript extension.
+
+### Testing
+1. Make changes to the source files
+2. Go to `chrome://extensions/`
+3. Click the refresh icon on the extension card
+4. Test your changes
+
+## 📄 License
+
+MIT License - feel free to use and modify as needed.
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs
+- Suggest new features
+- Submit pull requests
+
+## 📞 Support
+
+If you encounter any issues or have questions, please open an issue on GitHub.
+
+---
+
+Made with ❤️ for Microsoft 365 Admins

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M365 Admin Quick Links</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>🔗 Admin Quick Links</h1>
+    <div class="header-actions">
+      <button id="btn-sort" class="icon-btn" title="Sort sections">🔤</button>
+      <button id="btn-add" class="icon-btn" title="Add current tab">➕</button>
+      <button id="btn-settings" class="icon-btn" title="Settings">⚙️</button>
+      <button id="btn-darkmode" class="icon-btn" title="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <!-- Settings Panel -->
+  <div id="settings-panel" class="settings-panel" hidden>
+    <h3>Settings</h3>
+    <div class="setting-row">
+      <label>Display Mode</label>
+      <select id="display-mode">
+        <option value="popup">Popup</option>
+        <option value="sidepanel">Side Panel</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label>Open Links In</label>
+      <select id="open-mode">
+        <option value="newtab">New Tab</option>
+        <option value="current">Current Tab</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label>Sort Sections</label>
+      <select id="sort-mode">
+        <option value="manual">Manual (drag to reorder)</option>
+        <option value="alpha">Alphabetical (A-Z)</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <button id="btn-reset-order" class="btn-secondary">Reset Section Order</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- Power Platform -->
+    <section class="link-group" data-group="power-platform" draggable="true">
+      <h2><span class="drag-handle">⋮⋮</span>⚡ Power Platform</h2>
+      <ul>
+        <li><a href="https://make.powerapps.com" target="_blank">Power Apps Maker Portal</a></li>
+        <li><a href="https://make.powerautomate.com" target="_blank">Power Automate</a></li>
+        <li><a href="https://copilotstudio.microsoft.com" target="_blank">Copilot Studio</a></li>
+        <li><a href="https://make.powerpages.microsoft.com" target="_blank">Power Pages</a></li>
+        <li><a href="https://admin.powerplatform.microsoft.com" target="_blank">Power Platform Admin Center</a></li>
+      </ul>
+    </section>
+
+    <!-- Microsoft 365 Admin -->
+    <section class="link-group" data-group="m365-admin" draggable="true">
+      <h2><span class="drag-handle">⋮⋮</span>🛡️ M365 Admin</h2>
+      <ul>
+        <li><a href="https://admin.microsoft.com" target="_blank">Microsoft 365 Admin Center</a></li>
+        <li><a href="https://entra.microsoft.com" target="_blank">Microsoft Entra Admin Center</a></li>
+        <li><a href="https://security.microsoft.com" target="_blank">Microsoft 365 Defender</a></li>
+        <li><a href="https://compliance.microsoft.com" target="_blank">Microsoft Purview (Compliance)</a></li>
+        <li><a href="https://admin.exchange.microsoft.com" target="_blank">Exchange Admin Center</a></li>
+        <li><a href="https://admin.teams.microsoft.com" target="_blank">Teams Admin Center</a></li>
+        <li><a href="https://admin.onedrive.com" target="_blank">OneDrive Admin Center</a></li>
+      </ul>
+    </section>
+
+    <!-- SharePoint -->
+    <section class="link-group" data-group="sharepoint" draggable="true">
+      <h2><span class="drag-handle">⋮⋮</span>📁 SharePoint</h2>
+      <ul>
+        <li><a href="https://admin.microsoft.com/sharepoint" target="_blank">SharePoint Admin Center</a></li>
+        <li><a href="https://lookup.icann.org" target="_blank" class="hint">Tenant Lookup (ICANN)</a></li>
+      </ul>
+    </section>
+
+    <!-- Azure -->
+    <section class="link-group" data-group="azure" draggable="true">
+      <h2><span class="drag-handle">⋮⋮</span>☁️ Azure</h2>
+      <ul>
+        <li><a href="https://portal.azure.com" target="_blank">Azure Portal</a></li>
+        <li><a href="https://dev.azure.com" target="_blank">Azure DevOps</a></li>
+        <li><a href="https://ai.azure.com" target="_blank">Azure AI Studio</a></li>
+        <li><a href="https://oai.azure.com" target="_blank">Azure OpenAI Studio</a></li>
+      </ul>
+    </section>
+
+    <!-- Dynamics 365 -->
+    <section class="link-group" data-group="dynamics" draggable="true">
+      <h2><span class="drag-handle">⋮⋮</span>📊 Dynamics 365</h2>
+      <ul>
+        <li><a href="https://home.dynamics.com" target="_blank">Dynamics 365 Home</a></li>
+        <li><a href="https://admin.dynamics.com" target="_blank">Dynamics 365 Admin Center</a></li>
+      </ul>
+    </section>
+
+    <!-- Developer & Tools -->
+    <section class="link-group" data-group="developer" draggable="true">
+      <h2><span class="drag-handle">⋮⋮</span>🛠️ Developer Tools</h2>
+      <ul>
+        <li><a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Graph Explorer</a></li>
+        <li><a href="https://jwt.ms" target="_blank">JWT Decoder (jwt.ms)</a></li>
+        <li><a href="https://learn.microsoft.com/en-us/connectors/connector-reference/" target="_blank">Connector Reference</a></li>
+        <li><a href="https://learn.microsoft.com/en-us/power-platform/" target="_blank">Power Platform Docs</a></li>
+        <li><a href="https://learn.microsoft.com/en-us/graph/" target="_blank">Microsoft Graph Docs</a></li>
+        <li><a href="https://status.office.com" target="_blank">Service Health Status</a></li>
+      </ul>
+    </section>
+
+    <!-- Copilot -->
+    <section class="link-group" data-group="copilot" draggable="true">
+      <h2><span class="drag-handle">⋮⋮</span>🤖 Copilot</h2>
+      <ul>
+        <li><a href="https://copilot.microsoft.com" target="_blank">Microsoft Copilot</a></li>
+        <li><a href="https://copilotstudio.microsoft.com" target="_blank">Copilot Studio</a></li>
+        <li><a href="https://admin.microsoft.com/Adminportal/Home#/copilot" target="_blank">Copilot Admin (M365)</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <span id="open-mode-hint" class="hint">Click to open in new tab</span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
