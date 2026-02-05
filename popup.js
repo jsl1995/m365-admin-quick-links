@@ -1,3 +1,5 @@
+console.log('popup.js loading...');
+
 // DOM references
 const $btnDarkMode = document.getElementById('btn-darkmode');
 const $btnAdd = document.getElementById('btn-add');
@@ -35,8 +37,11 @@ let draggedSection = null;
 
 // Load saved preferences
 chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMode', 'sortMode', 'customSections', 'hiddenSections', 'setupComplete'], (result) => {
+  console.log('Storage loaded:', result);
+  
   // Check if first run - show wizard
   if (!result.setupComplete) {
+    console.log('First run - showing wizard');
     $setupWizard.hidden = false;
     initWizard();
     return;
@@ -236,6 +241,16 @@ $btnResetOrder.addEventListener('click', () => {
 $btnManageSections.addEventListener('click', () => {
   showManageSectionsModal();
 });
+
+// Reset Wizard
+const $btnResetWizard = document.getElementById('btn-reset-wizard');
+if ($btnResetWizard) {
+  $btnResetWizard.addEventListener('click', () => {
+    chrome.storage.sync.remove('setupComplete', () => {
+      location.reload();
+    });
+  });
+}
 
 function showManageSectionsModal() {
   const modal = document.createElement('div');
