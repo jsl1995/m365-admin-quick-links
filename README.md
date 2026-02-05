@@ -19,6 +19,68 @@ Instant access to essential Microsoft admin portals organized by category:
 - **🛠️ Developer Tools** - Graph Explorer, JWT Decoder, Connector Reference, Docs, Service Health
 - **🤖 Copilot** - Microsoft Copilot, Copilot Studio, Copilot Admin
 
+<details>
+<summary><strong>📋 Complete List of Default Links (28 links)</strong></summary>
+
+#### ⚡ Power Platform
+| Link | URL |
+|------|-----|
+| Power Apps Maker Portal | https://make.powerapps.com |
+| Power Automate | https://make.powerautomate.com |
+| Copilot Studio | https://copilotstudio.microsoft.com |
+| Power Pages | https://make.powerpages.microsoft.com |
+| Power Platform Admin Center | https://admin.powerplatform.microsoft.com |
+
+#### 🛡️ M365 Admin
+| Link | URL |
+|------|-----|
+| Microsoft 365 Admin Center | https://admin.microsoft.com |
+| Microsoft Entra Admin Center | https://entra.microsoft.com |
+| Microsoft 365 Defender | https://security.microsoft.com |
+| Microsoft Purview (Compliance) | https://compliance.microsoft.com |
+| Exchange Admin Center | https://admin.exchange.microsoft.com |
+| Teams Admin Center | https://admin.teams.microsoft.com |
+| OneDrive Admin Center | https://admin.onedrive.com |
+
+#### 📁 SharePoint
+| Link | URL |
+|------|-----|
+| SharePoint Admin Center | https://admin.microsoft.com/sharepoint |
+| Tenant Lookup (ICANN) | https://lookup.icann.org |
+
+#### ☁️ Azure
+| Link | URL |
+|------|-----|
+| Azure Portal | https://portal.azure.com |
+| Azure DevOps | https://dev.azure.com |
+| Azure AI Studio | https://ai.azure.com |
+| Azure OpenAI Studio | https://oai.azure.com |
+
+#### 📊 Dynamics 365
+| Link | URL |
+|------|-----|
+| Dynamics 365 Home | https://home.dynamics.com |
+| Dynamics 365 Admin Center | https://admin.dynamics.com |
+
+#### 🛠️ Developer Tools
+| Link | URL |
+|------|-----|
+| Graph Explorer | https://developer.microsoft.com/en-us/graph/graph-explorer |
+| JWT Decoder (jwt.ms) | https://jwt.ms |
+| Connector Reference | https://learn.microsoft.com/en-us/connectors/connector-reference/ |
+| Power Platform Docs | https://learn.microsoft.com/en-us/power-platform/ |
+| Microsoft Graph Docs | https://learn.microsoft.com/en-us/graph/ |
+| Service Health Status | https://status.office.com |
+
+#### 🤖 Copilot
+| Link | URL |
+|------|-----|
+| Microsoft Copilot | https://copilot.microsoft.com |
+| Copilot Studio | https://copilotstudio.microsoft.com |
+| Copilot Admin (M365) | https://admin.microsoft.com/Adminportal/Home#/copilot |
+
+</details>
+
 ### ➕ Custom Sections & Links
 Add your own frequently used links organized into custom sections:
 - Click the **➕** button to add the current tab as a link
