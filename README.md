@@ -109,11 +109,15 @@ Access the settings panel to configure:
 ## 📥 Installation
 
 ### From Source (Developer Mode)
-1. Download or clone this repository
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/jsl1995/m365-admin-quick-links.git
+   ```
 2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable **Developer mode** (toggle in top right)
+3. Enable **Developer mode** using the toggle in the top right corner
 4. Click **Load unpacked**
-5. Select the extension folder
+5. Navigate to and select the cloned `m365-admin-quick-links` folder
+6. The extension will now appear in your toolbar - click the puzzle icon and pin it for easy access
 
 ### From Chrome Web Store
 *Coming soon*
