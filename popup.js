@@ -13,7 +13,6 @@ const $btnResetOrder = document.getElementById('btn-reset-order');
 const $btnManageSections = document.getElementById('btn-manage-sections');
 const $hint = document.getElementById('open-mode-hint');
 const $main = document.querySelector('main');
-const $setupWizard = document.getElementById('setup-wizard');
 let $links = document.querySelectorAll('.link-group a');
 
 // Default sections definition
@@ -36,16 +35,8 @@ let hiddenSections = []; // Array of section IDs that are hidden
 let draggedSection = null;
 
 // Load saved preferences
-chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMode', 'sortMode', 'customSections', 'hiddenSections', 'setupComplete'], (result) => {
+chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMode', 'sortMode', 'customSections', 'hiddenSections'], (result) => {
   console.log('Storage loaded:', result);
-  
-  // Check if first run - show wizard
-  if (!result.setupComplete) {
-    console.log('First run - showing wizard');
-    $setupWizard.hidden = false;
-    initWizard();
-    return;
-  }
   
   // Dark mode
   if (result.darkMode) {
@@ -86,54 +77,6 @@ chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMod
   // Apply ordering
   applySectionOrder();
 });
-
-// === Setup Wizard ===
-function initWizard() {
-  const $wizardSelectAll = document.getElementById('wizard-select-all');
-  const $wizardDone = document.getElementById('wizard-done');
-  const checkboxes = $setupWizard.querySelectorAll('.wizard-option input[type="checkbox"]');
-  
-  console.log('initWizard called', { $wizardSelectAll, $wizardDone, checkboxes: checkboxes.length });
-  
-  if (!$wizardDone) {
-    console.error('wizard-done button not found!');
-    return;
-  }
-  
-  // Update select all button text
-  function updateSelectAllBtn() {
-    const allChecked = [...checkboxes].every(cb => cb.checked);
-    $wizardSelectAll.textContent = allChecked ? 'Deselect All' : 'Select All';
-  }
-  
-  checkboxes.forEach(cb => cb.addEventListener('change', updateSelectAllBtn));
-  
-  $wizardSelectAll.addEventListener('click', () => {
-    const allChecked = [...checkboxes].every(cb => cb.checked);
-    checkboxes.forEach(cb => cb.checked = !allChecked);
-    updateSelectAllBtn();
-  });
-  
-  $wizardDone.addEventListener('click', () => {
-    console.log('Get Started clicked');
-    // Get unchecked sections
-    const uncheckedSections = [...checkboxes]
-      .filter(cb => !cb.checked)
-      .map(cb => cb.value);
-    
-    console.log('Unchecked sections:', uncheckedSections);
-    hiddenSections = uncheckedSections;
-    
-    // Save and close wizard, then reload to initialize properly
-    chrome.storage.sync.set({ 
-      setupComplete: true,
-      hiddenSections: hiddenSections
-    }, () => {
-      console.log('Storage saved, reloading');
-      location.reload();
-    });
-  });
-}
 
 // Apply hidden sections
 function applyHiddenSections() {
@@ -241,16 +184,6 @@ $btnResetOrder.addEventListener('click', () => {
 $btnManageSections.addEventListener('click', () => {
   showManageSectionsModal();
 });
-
-// Reset Wizard
-const $btnResetWizard = document.getElementById('btn-reset-wizard');
-if ($btnResetWizard) {
-  $btnResetWizard.addEventListener('click', () => {
-    chrome.storage.sync.remove('setupComplete', () => {
-      location.reload();
-    });
-  });
-}
 
 function showManageSectionsModal() {
   const modal = document.createElement('div');
