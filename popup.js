@@ -5,6 +5,7 @@ const $btnDarkMode = document.getElementById('btn-darkmode');
 const $btnAdd = document.getElementById('btn-add');
 const $btnSort = document.getElementById('btn-sort');
 const $btnSettings = document.getElementById('btn-settings');
+const $btnPopout = document.getElementById('btn-popout');
 const $settingsPanel = document.getElementById('settings-panel');
 const $displayMode = document.getElementById('display-mode');
 const $openMode = document.getElementById('open-mode');
@@ -99,6 +100,18 @@ $btnDarkMode.addEventListener('click', () => {
   $btnDarkMode.textContent = isDark ? '☀️' : '🌙';
   chrome.storage.sync.set({ darkMode: isDark });
 });
+
+// Pop out to separate window
+if ($btnPopout) {
+  $btnPopout.addEventListener('click', () => {
+    chrome.windows.create({
+      url: chrome.runtime.getURL('sidepanel.html'),
+      type: 'popup',
+      width: 400,
+      height: 700
+    });
+  });
+}
 
 // Toggle settings panel
 $btnSettings.addEventListener('click', () => {
