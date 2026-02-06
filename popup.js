@@ -1,6 +1,14 @@
+/**
+ * M365 Admin Quick Links - Main Popup Script
+ * Manages the extension's user interface, custom sections, dark mode,
+ * drag-and-drop reordering, and user preferences
+ */
+
 console.log('popup.js loading...');
 
-// DOM references
+// ============================================================================
+// DOM Element References
+// ============================================================================
 const $btnDarkMode = document.getElementById('btn-darkmode');
 const $btnAdd = document.getElementById('btn-add');
 const $btnSort = document.getElementById('btn-sort');
@@ -16,7 +24,15 @@ const $hint = document.getElementById('open-mode-hint');
 const $main = document.querySelector('main');
 let $links = document.querySelectorAll('.link-group a');
 
-// Default sections definition
+// ============================================================================
+// Configuration and State
+// ============================================================================
+
+/**
+ * Default sections configuration
+ * These sections are built into the extension and cannot be deleted
+ * @type {Array<{id: string, name: string, emoji: string}>}
+ */
 const DEFAULT_SECTIONS = [
   { id: 'power-platform', name: 'Power Platform', emoji: '⚡' },
   { id: 'm365-admin', name: 'M365 Admin', emoji: '🛡️' },
@@ -27,15 +43,31 @@ const DEFAULT_SECTIONS = [
   { id: 'copilot', name: 'Copilot', emoji: '🤖' }
 ];
 
-// State
+/**
+ * Application state variables
+ */
+// Whether links open in a new tab or current tab
 let openInNewTab = true;
+
+// Custom order of sections (array of section IDs)
 let sectionOrder = [];
-let sortMode = 'manual'; // 'manual', 'alpha-az', 'alpha-za'
-let customSections = []; // { id, name, emoji, links: [{title, url}] }
-let hiddenSections = []; // Array of section IDs that are hidden
+
+// Current sort mode: 'manual', 'alpha-az', or 'alpha-za'
+let sortMode = 'manual';
+
+// User-created custom sections with their links
+// @type {Array<{id: string, name: string, emoji: string, links: Array<{title: string, url: string}>}>}
+let customSections = [];
+
+// Array of default section IDs that should be hidden
+let hiddenSections = [];
+
+// Currently dragged section element (used for drag-and-drop)
 let draggedSection = null;
 
-// Load saved preferences
+// ============================================================================
+// Initialization - Load Saved Preferences
+// ============================================================================
 chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMode', 'sortMode', 'customSections', 'hiddenSections', 'showWalkthrough'], (result) => {
   console.log('Storage loaded:', result);
   
@@ -84,7 +116,14 @@ chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMod
   }
 });
 
-// Apply hidden sections
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+/**
+ * Apply visibility settings to default sections based on user preferences
+ * Hidden sections are set to display: none
+ */
 function applyHiddenSections() {
   DEFAULT_SECTIONS.forEach(section => {
     const el = document.querySelector(`.link-group[data-group="${section.id}"]`);
@@ -94,14 +133,28 @@ function applyHiddenSections() {
   });
 }
 
-// Toggle dark mode
+// ============================================================================
+// Event Handlers - Dark Mode
+// ============================================================================
+
+/**
+ * Toggle dark mode on/off
+ * Updates the UI and saves preference to storage
+ */
 $btnDarkMode.addEventListener('click', () => {
   const isDark = document.body.classList.toggle('dark');
   $btnDarkMode.textContent = isDark ? '☀️' : '🌙';
   chrome.storage.sync.set({ darkMode: isDark });
 });
 
-// Pop out to separate window
+// ============================================================================
+// Event Handlers - Pop Out Window
+// ============================================================================
+
+/**
+ * Open extension in a separate popup window
+ * Creates a new window with fixed dimensions
+ */
 if ($btnPopout) {
   $btnPopout.addEventListener('click', () => {
     chrome.windows.create({
@@ -113,13 +166,22 @@ if ($btnPopout) {
   });
 }
 
-// Toggle settings panel
+// ============================================================================
+// Event Handlers - Settings Panel
+// ============================================================================
+
+/**
+ * Toggle the settings panel visibility
+ */
 $btnSettings.addEventListener('click', () => {
   $settingsPanel.hidden = !$settingsPanel.hidden;
   $btnSettings.classList.toggle('active', !$settingsPanel.hidden);
 });
 
-// Display mode change
+/**
+ * Handle display mode changes (popup vs side panel)
+ * Saves the preference and notifies user of the change
+ */
 $displayMode.addEventListener('change', () => {
   const mode = $displayMode.value;
   chrome.storage.sync.set({ displayMode: mode });
@@ -131,14 +193,20 @@ $displayMode.addEventListener('change', () => {
   }
 });
 
-// Open mode change (from dropdown)
+/**
+ * Handle open mode changes (new tab vs current tab)
+ * Updates link behavior throughout the extension
+ */
 $openMode.addEventListener('change', () => {
   openInNewTab = $openMode.value === 'newtab';
   chrome.storage.sync.set({ openInNewTab });
   updateOpenMode();
 });
 
-// Sort mode change (from dropdown)
+/**
+ * Handle sort mode changes from the dropdown
+ * Updates button state and reorders sections
+ */
 $sortMode.addEventListener('change', () => {
   sortMode = $sortMode.value;
   chrome.storage.sync.set({ sortMode });
@@ -146,7 +214,10 @@ $sortMode.addEventListener('change', () => {
   applySectionOrder();
 });
 
-// Sort toggle button (cycles through: manual -> A-Z -> Z-A -> manual)
+/**
+ * Cycle through sort modes using the sort button
+ * Order: manual -> A-Z -> Z-A -> manual
+ */
 $btnSort.addEventListener('click', () => {
   if (sortMode === 'manual') {
     sortMode = 'alpha-az';
@@ -161,6 +232,10 @@ $btnSort.addEventListener('click', () => {
   applySectionOrder();
 });
 
+/**
+ * Update the sort button appearance based on current sort mode
+ * Changes icon and tooltip text
+ */
 function updateSortButton() {
   if (sortMode === 'alpha-az') {
     $btnSort.textContent = '🔤';
@@ -177,6 +252,9 @@ function updateSortButton() {
   }
 }
 
+/**
+ * Sync the sort mode dropdown with the current sort mode state
+ */
 function updateSortModeDropdown() {
   if (sortMode === 'alpha-az' || sortMode === 'alpha-za') {
     $sortMode.value = 'alpha';
@@ -185,20 +263,37 @@ function updateSortModeDropdown() {
   }
 }
 
-// Add button - show modal to add current tab
+/**
+ * Show the add link modal with current tab's information
+ * Retrieves active tab title and URL, then displays modal
+ */
 $btnAdd.addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  showAddLinkModal(tab.title, tab.url);
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab) {
+      showAddLinkModal(tab.title, tab.url);
+    }
+  } catch (error) {
+    console.error('Error getting current tab:', error);
+    // Fallback: show modal with empty values
+    showAddLinkModal('', '');
+  }
 });
 
-// Reset section order
+/**
+ * Reset section order to default
+ * Clears saved order and reloads the page
+ */
 $btnResetOrder.addEventListener('click', () => {
   chrome.storage.sync.remove('sectionOrder', () => {
     location.reload();
   });
 });
 
-// Retake feature tour
+/**
+ * Restart the feature walkthrough
+ * Allows users to see the onboarding tour again
+ */
 const $btnWalkthrough = document.getElementById('btn-walkthrough');
 if ($btnWalkthrough) {
   $btnWalkthrough.addEventListener('click', () => {
@@ -208,7 +303,11 @@ if ($btnWalkthrough) {
   });
 }
 
-// Add all links to bookmarks
+/**
+ * Export all visible links to browser bookmarks
+ * Creates a folder structure that mirrors the current section organization
+ * Handles both Chrome and Edge bookmark bars
+ */
 const $btnAddBookmarks = document.getElementById('btn-add-bookmarks');
 if ($btnAddBookmarks) {
   $btnAddBookmarks.addEventListener('click', async () => {
@@ -276,7 +375,10 @@ if ($btnAddBookmarks) {
   });
 }
 
-// Manage Sections
+/**
+ * Show the manage sections modal
+ * Allows users to toggle visibility of default sections
+ */
 $btnManageSections.addEventListener('click', () => {
   showManageSectionsModal();
 });
@@ -331,6 +433,10 @@ function showManageSectionsModal() {
   });
 }
 
+/**
+ * Update link target attributes based on open mode setting
+ * Sets target="_blank" for new tab mode, removes it for current tab mode
+ */
 function updateOpenMode() {
   $hint.textContent = openInNewTab ? 'Click to open in new tab' : 'Click to open in current tab';
   
@@ -344,7 +450,15 @@ function updateOpenMode() {
   });
 }
 
-// === Modal for Adding Links ===
+// ============================================================================
+// Modal Functions
+// ============================================================================
+
+/**
+ * Display modal for adding a new link
+ * @param {string} title - Default title for the link (usually current tab title)
+ * @param {string} url - Default URL for the link (usually current tab URL)
+ */
 function showAddLinkModal(title, url) {
   const existingSections = customSections.map(s => 
     '<option value="' + s.id + '">' + s.emoji + ' ' + s.name + '</option>'
@@ -403,14 +517,26 @@ function showAddLinkModal(title, url) {
     const linkTitle = modal.querySelector('#modal-title').value.trim();
     const linkUrl = modal.querySelector('#modal-url').value.trim();
     const sectionId = $sectionSelect.value;
-    
-    if (!linkTitle || !linkUrl) { alert('Please enter a title and URL'); return; }
-    
+
+    // Validate required fields
+    if (!linkTitle || !linkUrl) {
+      alert('Please enter a title and URL');
+      return;
+    }
+
+    // Basic URL validation
+    try {
+      new URL(linkUrl);
+    } catch (e) {
+      alert('Please enter a valid URL (including http:// or https://)');
+      return;
+    }
+
     if (sectionId === '__new__') {
       const sectionName = modal.querySelector('#modal-section-name').value.trim();
       const sectionEmoji = modal.querySelector('#modal-section-emoji').value.trim() || '⭐';
       if (!sectionName) { alert('Please enter a section name'); return; }
-      
+
       const newSection = {
         id: 'custom-' + Date.now(),
         name: sectionName,
@@ -422,7 +548,7 @@ function showAddLinkModal(title, url) {
       const section = customSections.find(s => s.id === sectionId);
       if (section) section.links.push({ title: linkTitle, url: linkUrl });
     }
-    
+
     chrome.storage.sync.set({ customSections });
     renderCustomSections();
     applySectionOrder();
@@ -431,13 +557,25 @@ function showAddLinkModal(title, url) {
   });
 }
 
+/**
+ * Escape HTML special characters to prevent XSS
+ * @param {string} text - Text to escape
+ * @returns {string} HTML-escaped text
+ */
 function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML.replace(/"/g, '&quot;');
 }
 
-// === Render Custom Sections ===
+// ============================================================================
+// Custom Sections Management
+// ============================================================================
+
+/**
+ * Render all custom sections in the DOM
+ * Removes existing custom sections and recreates them from state
+ */
 function renderCustomSections() {
   document.querySelectorAll('.link-group.custom-section').forEach(el => el.remove());
   
@@ -482,6 +620,11 @@ function renderCustomSections() {
   });
 }
 
+/**
+ * Delete a specific link from a custom section
+ * @param {string} sectionId - ID of the section containing the link
+ * @param {number} linkIdx - Index of the link to delete
+ */
 function deleteLink(sectionId, linkIdx) {
   const section = customSections.find(s => s.id === sectionId);
   if (section) {
@@ -494,6 +637,10 @@ function deleteLink(sectionId, linkIdx) {
   }
 }
 
+/**
+ * Delete an entire custom section and all its links
+ * @param {string} sectionId - ID of the section to delete
+ */
 function deleteSection(sectionId) {
   customSections = customSections.filter(s => s.id !== sectionId);
   chrome.storage.sync.set({ customSections });
@@ -502,7 +649,14 @@ function deleteSection(sectionId) {
   updateOpenMode();
 }
 
-// === Drag and Drop for Sections ===
+// ============================================================================
+// Drag and Drop Functionality
+// ============================================================================
+
+/**
+ * Set up drag and drop event listeners for all sections
+ * Enables manual reordering of sections
+ */
 function setupDragAndDrop() {
   document.querySelectorAll('.link-group').forEach(section => {
     section.addEventListener('dragstart', handleDragStart);
@@ -513,6 +667,10 @@ function setupDragAndDrop() {
   });
 }
 
+/**
+ * Handle drag start event
+ * @param {DragEvent} e - The drag event
+ */
 function handleDragStart(e) {
   draggedSection = this;
   this.classList.add('dragging');
@@ -520,20 +678,37 @@ function handleDragStart(e) {
   e.dataTransfer.setData('text/plain', this.dataset.group);
 }
 
+/**
+ * Handle drag end event
+ * Cleans up drag styling
+ */
 function handleDragEnd() {
   this.classList.remove('dragging');
   document.querySelectorAll('.link-group').forEach(s => s.classList.remove('drag-over'));
   draggedSection = null;
 }
 
+/**
+ * Handle drag over event
+ * @param {DragEvent} e - The drag event
+ */
 function handleDragOver(e) {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
   if (this !== draggedSection) this.classList.add('drag-over');
 }
 
+/**
+ * Handle drag leave event
+ * Removes the drag over styling
+ */
 function handleDragLeave() { this.classList.remove('drag-over'); }
 
+/**
+ * Handle drop event
+ * Reorders sections based on drop position
+ * @param {DragEvent} e - The drag event
+ */
 function handleDrop(e) {
   e.preventDefault();
   this.classList.remove('drag-over');
@@ -554,51 +729,77 @@ function handleDrop(e) {
   }
 }
 
+/**
+ * Save the current section order to storage
+ * Captures the current DOM order as the canonical order
+ */
 function saveSectionOrder() {
   sectionOrder = [...document.querySelectorAll('.link-group')].map(s => s.dataset.group);
   chrome.storage.sync.set({ sectionOrder });
 }
 
+/**
+ * Apply the current section ordering and sort mode
+ * Reorders sections in the DOM based on sort mode (manual/alphabetical)
+ * Enables or disables dragging based on sort mode
+ */
 function applySectionOrder() {
   const container = $main;
   const sections = [...document.querySelectorAll('.link-group')];
-  
+
+  // Handle alphabetical sorting modes
   if (sortMode === 'alpha-az' || sortMode === 'alpha-za') {
     sections.sort((a, b) => {
+      // Extract clean text from section titles (remove emojis and special chars)
       const titleA = a.querySelector('h2').textContent.replace(/[^\w\s]/g, '').trim().toLowerCase();
       const titleB = b.querySelector('h2').textContent.replace(/[^\w\s]/g, '').trim().toLowerCase();
       const result = titleA.localeCompare(titleB);
+      // Reverse the order for Z-A sorting
       return sortMode === 'alpha-za' ? -result : result;
     });
-    
+
+    // Disable dragging in alphabetical mode
     sections.forEach(s => {
       s.setAttribute('draggable', 'false');
       s.classList.add('no-drag');
     });
   } else {
+    // Handle manual sorting mode
     if (sectionOrder.length > 0) {
       sections.sort((a, b) => {
         const indexA = sectionOrder.indexOf(a.dataset.group);
         const indexB = sectionOrder.indexOf(b.dataset.group);
+        // New sections (not in saved order) go to the end
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
         return indexA - indexB;
       });
     }
-    
+
+    // Enable dragging in manual mode
     sections.forEach(s => {
       s.setAttribute('draggable', 'true');
       s.classList.remove('no-drag');
     });
   }
-  
+
+  // Reorder DOM elements and reinitialize drag handlers
   sections.forEach(section => container.appendChild(section));
   setupDragAndDrop();
 }
 
+// Initialize drag and drop
 setupDragAndDrop();
 
-// === Feature Walkthrough ===
+// ============================================================================
+// Feature Walkthrough System
+// ============================================================================
+
+/**
+ * Walkthrough step configuration
+ * Defines the onboarding tour steps shown to first-time users
+ * @type {Array<{target: string, title: string, description: string, position: string}>}
+ */
 const walkthroughSteps = [
   {
     target: '#btn-add',
@@ -632,9 +833,14 @@ const walkthroughSteps = [
   }
 ];
 
+// Walkthrough state
 let currentWalkthroughStep = 0;
 let walkthroughOverlay = null;
 
+/**
+ * Show the initial walkthrough welcome modal
+ * Displayed on first install to introduce the extension
+ */
 function showWalkthrough() {
   // Show welcome modal first
   const welcomeOverlay = document.createElement('div');
@@ -666,11 +872,19 @@ function showWalkthrough() {
   });
 }
 
+/**
+ * Start the step-by-step walkthrough
+ * Called after user accepts the welcome modal
+ */
 function startWalkthroughSteps() {
   currentWalkthroughStep = 0;
   showWalkthroughStep(currentWalkthroughStep);
 }
 
+/**
+ * Show a specific walkthrough step
+ * @param {number} stepIndex - Index of the step to display
+ */
 function showWalkthroughStep(stepIndex) {
   // Clean up previous step
   cleanupWalkthrough();
@@ -736,14 +950,21 @@ function showWalkthroughStep(stepIndex) {
   });
 }
 
+/**
+ * Position the walkthrough tooltip relative to its target element
+ * @param {HTMLElement} tooltip - The tooltip element to position
+ * @param {HTMLElement} targetEl - The element the tooltip points to
+ * @param {string} position - Desired position ('top', 'bottom', 'left', 'right')
+ */
 function positionTooltip(tooltip, targetEl, position) {
   const targetRect = targetEl.getBoundingClientRect();
   const tooltipRect = tooltip.getBoundingClientRect();
   const padding = 12;
-  
+
   let top, left;
   let arrowClass = 'arrow-top';
-  
+
+  // Calculate position based on desired placement
   switch (position) {
     case 'bottom':
       top = targetRect.bottom + padding;
@@ -769,18 +990,22 @@ function positionTooltip(tooltip, targetEl, position) {
       top = targetRect.bottom + padding;
       left = 8;
   }
-  
-  // Ensure tooltip stays within viewport
+
+  // Keep tooltip within viewport bounds
   if (top + tooltipRect.height > window.innerHeight - 8) {
     top = window.innerHeight - tooltipRect.height - 8;
   }
   if (top < 8) top = 8;
-  
+
   tooltip.style.top = `${top}px`;
   tooltip.style.left = `${left}px`;
   tooltip.classList.add(arrowClass);
 }
 
+/**
+ * Clean up walkthrough UI elements
+ * Removes highlights, tooltips, and overlays
+ */
 function cleanupWalkthrough() {
   // Remove highlight from all elements
   document.querySelectorAll('.walkthrough-highlight').forEach(el => {
@@ -797,12 +1022,19 @@ function cleanupWalkthrough() {
   }
 }
 
+/**
+ * Complete the walkthrough
+ * Cleans up UI and marks walkthrough as completed in storage
+ */
 function finishWalkthrough() {
   cleanupWalkthrough();
   chrome.storage.sync.set({ showWalkthrough: false });
 }
 
-// Allow manually triggering walkthrough from settings
+/**
+ * Restart the walkthrough from the beginning
+ * Allows users to retake the feature tour
+ */
 function restartWalkthrough() {
   showWalkthrough();
 }
