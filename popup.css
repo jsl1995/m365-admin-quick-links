@@ -597,3 +597,222 @@ footer .hint {
 .manage-section-item.hidden-section span {
   text-decoration: line-through;
 }
+
+/* Walkthrough/Onboarding Styles */
+.walkthrough-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 300;
+  pointer-events: auto;
+}
+
+.walkthrough-highlight {
+  position: relative;
+  z-index: 301;
+  box-shadow: 0 0 0 4px var(--accent), 0 0 0 9999px rgba(0, 0, 0, 0.75);
+  border-radius: 8px;
+  animation: pulse-highlight 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-highlight {
+  0%, 100% { box-shadow: 0 0 0 4px var(--accent), 0 0 0 9999px rgba(0, 0, 0, 0.75); }
+  50% { box-shadow: 0 0 0 6px var(--accent), 0 0 0 9999px rgba(0, 0, 0, 0.75); }
+}
+
+.walkthrough-tooltip {
+  position: fixed;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  width: 260px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  z-index: 302;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.walkthrough-tooltip::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-right: none;
+  border-bottom: none;
+  transform: rotate(45deg);
+}
+
+.walkthrough-tooltip.arrow-top::before {
+  top: -7px;
+  left: 24px;
+}
+
+.walkthrough-tooltip.arrow-bottom::before {
+  bottom: -7px;
+  left: 24px;
+  transform: rotate(225deg);
+}
+
+.walkthrough-tooltip.arrow-left::before {
+  left: -7px;
+  top: 20px;
+  transform: rotate(-45deg);
+}
+
+.walkthrough-tooltip.arrow-right::before {
+  right: -7px;
+  top: 20px;
+  transform: rotate(135deg);
+}
+
+.walkthrough-step-indicator {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.walkthrough-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s;
+}
+
+.walkthrough-step-dot.active {
+  background: var(--accent);
+}
+
+.walkthrough-step-dot.completed {
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+.walkthrough-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.walkthrough-description {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.walkthrough-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.walkthrough-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.walkthrough-btn-skip {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.walkthrough-btn-skip:hover {
+  background: var(--bg-section);
+}
+
+.walkthrough-btn-next {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: white;
+  flex: 1;
+  max-width: 120px;
+}
+
+.walkthrough-btn-next:hover {
+  background: var(--accent-hover);
+}
+
+/* Welcome modal for walkthrough intro */
+.walkthrough-welcome {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  width: 280px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  z-index: 302;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.walkthrough-welcome-emoji {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.walkthrough-welcome h2 {
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.walkthrough-welcome p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.walkthrough-welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.walkthrough-welcome-actions button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.walkthrough-btn-start {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: white;
+}
+
+.walkthrough-btn-start:hover {
+  background: var(--accent-hover);
+}
+
+.walkthrough-btn-dismiss {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.walkthrough-btn-dismiss:hover {
+  background: var(--bg-section);
+}

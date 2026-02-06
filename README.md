@@ -2,7 +2,7 @@
 
 ![Logo](logo.png)
 
-A Chrome extension providing quick access to essential Microsoft 365 and Power Platform admin portals. Save time navigating between admin centers with one-click access to all your frequently used Microsoft portals.
+A browser extension for **Chrome** and **Microsoft Edge** providing quick access to essential Microsoft 365 and Power Platform admin portals. Save time navigating between admin centers with one-click access to all your frequently used Microsoft portals.
 
 ![Screenshot](screenshots/screenshot-1.png)
 
@@ -109,6 +109,8 @@ Access the settings panel to configure:
 ## 📥 Installation
 
 ### From Source (Developer Mode)
+
+#### Chrome
 1. Clone the repository:
    ```bash
    git clone https://github.com/jsl1995/m365-admin-quick-links.git
@@ -119,7 +121,21 @@ Access the settings panel to configure:
 5. Navigate to and select the cloned `m365-admin-quick-links` folder
 6. The extension will now appear in your toolbar - click the puzzle icon and pin it for easy access
 
+#### Microsoft Edge
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/jsl1995/m365-admin-quick-links.git
+   ```
+2. Open Edge and navigate to `edge://extensions/`
+3. Enable **Developer mode** using the toggle in the left sidebar
+4. Click **Load unpacked**
+5. Navigate to and select the cloned `m365-admin-quick-links` folder
+6. The extension will now appear in your toolbar - click the puzzle icon and pin it for easy access
+
 ### From Chrome Web Store
+*Coming soon*
+
+### From Microsoft Edge Add-ons
 *Coming soon*
 
 ## 🚀 Usage

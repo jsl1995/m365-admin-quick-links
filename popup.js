@@ -35,7 +35,7 @@ let hiddenSections = []; // Array of section IDs that are hidden
 let draggedSection = null;
 
 // Load saved preferences
-chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMode', 'sortMode', 'customSections', 'hiddenSections'], (result) => {
+chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMode', 'sortMode', 'customSections', 'hiddenSections', 'showWalkthrough'], (result) => {
   console.log('Storage loaded:', result);
   
   // Dark mode
@@ -76,6 +76,11 @@ chrome.storage.sync.get(['darkMode', 'openInNewTab', 'sectionOrder', 'displayMod
   
   // Apply ordering
   applySectionOrder();
+  
+  // Show walkthrough on first install
+  if (result.showWalkthrough) {
+    setTimeout(() => showWalkthrough(), 300);
+  }
 });
 
 // Apply hidden sections
@@ -179,6 +184,16 @@ $btnResetOrder.addEventListener('click', () => {
     location.reload();
   });
 });
+
+// Retake feature tour
+const $btnWalkthrough = document.getElementById('btn-walkthrough');
+if ($btnWalkthrough) {
+  $btnWalkthrough.addEventListener('click', () => {
+    $settingsPanel.hidden = true;
+    $btnSettings.classList.remove('active');
+    restartWalkthrough();
+  });
+}
 
 // Manage Sections
 $btnManageSections.addEventListener('click', () => {
@@ -501,3 +516,212 @@ function applySectionOrder() {
 }
 
 setupDragAndDrop();
+
+// === Feature Walkthrough ===
+const walkthroughSteps = [
+  {
+    target: '#btn-add',
+    title: '➕ Add Your Own Links',
+    description: 'Click here to add any webpage as a quick link. You can create custom sections to organize your links.',
+    position: 'bottom'
+  },
+  {
+    target: '#btn-sort',
+    title: '🔤 Sort & Organize',
+    description: 'Click to cycle through sorting options: alphabetical A-Z, Z-A, or manual. Drag sections to reorder them manually.',
+    position: 'bottom'
+  },
+  {
+    target: '#btn-settings',
+    title: '⚙️ Preferences',
+    description: 'Access settings to change display mode (popup or side panel), link behavior, and manage which sections are visible.',
+    position: 'bottom'
+  },
+  {
+    target: '#btn-darkmode',
+    title: '🌙 Dark Mode',
+    description: 'Toggle between light and dark themes for comfortable viewing.',
+    position: 'bottom'
+  },
+  {
+    target: '.link-group',
+    title: '⋮⋮ Drag to Reorder',
+    description: 'Grab any section by its header and drag to rearrange. Your custom order is saved automatically.',
+    position: 'right'
+  }
+];
+
+let currentWalkthroughStep = 0;
+let walkthroughOverlay = null;
+
+function showWalkthrough() {
+  // Show welcome modal first
+  const welcomeOverlay = document.createElement('div');
+  welcomeOverlay.className = 'walkthrough-overlay';
+  
+  const welcomeModal = document.createElement('div');
+  welcomeModal.className = 'walkthrough-welcome';
+  welcomeModal.innerHTML = `
+    <div class="walkthrough-welcome-emoji">👋</div>
+    <h2>Welcome!</h2>
+    <p>Thanks for installing M365 Admin Quick Links. Would you like a quick tour of the features?</p>
+    <div class="walkthrough-welcome-actions">
+      <button class="walkthrough-btn-start">Take the Tour</button>
+      <button class="walkthrough-btn-dismiss">Skip for Now</button>
+    </div>
+  `;
+  
+  welcomeOverlay.appendChild(welcomeModal);
+  document.body.appendChild(welcomeOverlay);
+  
+  welcomeModal.querySelector('.walkthrough-btn-start').addEventListener('click', () => {
+    welcomeOverlay.remove();
+    startWalkthroughSteps();
+  });
+  
+  welcomeModal.querySelector('.walkthrough-btn-dismiss').addEventListener('click', () => {
+    welcomeOverlay.remove();
+    chrome.storage.sync.set({ showWalkthrough: false });
+  });
+}
+
+function startWalkthroughSteps() {
+  currentWalkthroughStep = 0;
+  showWalkthroughStep(currentWalkthroughStep);
+}
+
+function showWalkthroughStep(stepIndex) {
+  // Clean up previous step
+  cleanupWalkthrough();
+  
+  if (stepIndex >= walkthroughSteps.length) {
+    finishWalkthrough();
+    return;
+  }
+  
+  const step = walkthroughSteps[stepIndex];
+  const targetEl = document.querySelector(step.target);
+  
+  if (!targetEl) {
+    // Skip to next step if target not found
+    showWalkthroughStep(stepIndex + 1);
+    return;
+  }
+  
+  // Create overlay (but we'll use box-shadow for darkening)
+  walkthroughOverlay = document.createElement('div');
+  walkthroughOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:299;pointer-events:none;';
+  document.body.appendChild(walkthroughOverlay);
+  
+  // Highlight target
+  targetEl.classList.add('walkthrough-highlight');
+  
+  // Scroll target into view if needed
+  targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  
+  // Create tooltip
+  const tooltip = document.createElement('div');
+  tooltip.className = 'walkthrough-tooltip';
+  
+  // Step indicators
+  const dotsHtml = walkthroughSteps.map((_, i) => {
+    const state = i < stepIndex ? 'completed' : (i === stepIndex ? 'active' : '');
+    return `<div class="walkthrough-step-dot ${state}"></div>`;
+  }).join('');
+  
+  tooltip.innerHTML = `
+    <div class="walkthrough-step-indicator">${dotsHtml}</div>
+    <div class="walkthrough-title">${step.title}</div>
+    <div class="walkthrough-description">${step.description}</div>
+    <div class="walkthrough-actions">
+      <button class="walkthrough-btn walkthrough-btn-skip">Skip</button>
+      <button class="walkthrough-btn walkthrough-btn-next">${stepIndex === walkthroughSteps.length - 1 ? 'Finish' : 'Next'}</button>
+    </div>
+  `;
+  
+  document.body.appendChild(tooltip);
+  
+  // Position tooltip
+  positionTooltip(tooltip, targetEl, step.position);
+  
+  // Button handlers
+  tooltip.querySelector('.walkthrough-btn-skip').addEventListener('click', () => {
+    finishWalkthrough();
+  });
+  
+  tooltip.querySelector('.walkthrough-btn-next').addEventListener('click', () => {
+    currentWalkthroughStep++;
+    showWalkthroughStep(currentWalkthroughStep);
+  });
+}
+
+function positionTooltip(tooltip, targetEl, position) {
+  const targetRect = targetEl.getBoundingClientRect();
+  const tooltipRect = tooltip.getBoundingClientRect();
+  const padding = 12;
+  
+  let top, left;
+  let arrowClass = 'arrow-top';
+  
+  switch (position) {
+    case 'bottom':
+      top = targetRect.bottom + padding;
+      left = Math.max(8, Math.min(targetRect.left, window.innerWidth - tooltipRect.width - 8));
+      arrowClass = 'arrow-top';
+      break;
+    case 'top':
+      top = targetRect.top - tooltipRect.height - padding;
+      left = Math.max(8, Math.min(targetRect.left, window.innerWidth - tooltipRect.width - 8));
+      arrowClass = 'arrow-bottom';
+      break;
+    case 'right':
+      top = targetRect.top;
+      left = Math.min(targetRect.right + padding, window.innerWidth - tooltipRect.width - 8);
+      arrowClass = 'arrow-left';
+      break;
+    case 'left':
+      top = targetRect.top;
+      left = Math.max(8, targetRect.left - tooltipRect.width - padding);
+      arrowClass = 'arrow-right';
+      break;
+    default:
+      top = targetRect.bottom + padding;
+      left = 8;
+  }
+  
+  // Ensure tooltip stays within viewport
+  if (top + tooltipRect.height > window.innerHeight - 8) {
+    top = window.innerHeight - tooltipRect.height - 8;
+  }
+  if (top < 8) top = 8;
+  
+  tooltip.style.top = `${top}px`;
+  tooltip.style.left = `${left}px`;
+  tooltip.classList.add(arrowClass);
+}
+
+function cleanupWalkthrough() {
+  // Remove highlight from all elements
+  document.querySelectorAll('.walkthrough-highlight').forEach(el => {
+    el.classList.remove('walkthrough-highlight');
+  });
+  
+  // Remove tooltip
+  document.querySelectorAll('.walkthrough-tooltip').forEach(el => el.remove());
+  
+  // Remove overlay
+  if (walkthroughOverlay) {
+    walkthroughOverlay.remove();
+    walkthroughOverlay = null;
+  }
+}
+
+function finishWalkthrough() {
+  cleanupWalkthrough();
+  chrome.storage.sync.set({ showWalkthrough: false });
+}
+
+// Allow manually triggering walkthrough from settings
+function restartWalkthrough() {
+  showWalkthrough();
+}
