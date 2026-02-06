@@ -268,8 +268,16 @@ function updateSortModeDropdown() {
  * Retrieves active tab title and URL, then displays modal
  */
 $btnAdd.addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  showAddLinkModal(tab.title, tab.url);
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab) {
+      showAddLinkModal(tab.title, tab.url);
+    }
+  } catch (error) {
+    console.error('Error getting current tab:', error);
+    // Fallback: show modal with empty values
+    showAddLinkModal('', '');
+  }
 });
 
 /**
@@ -509,14 +517,26 @@ function showAddLinkModal(title, url) {
     const linkTitle = modal.querySelector('#modal-title').value.trim();
     const linkUrl = modal.querySelector('#modal-url').value.trim();
     const sectionId = $sectionSelect.value;
-    
-    if (!linkTitle || !linkUrl) { alert('Please enter a title and URL'); return; }
-    
+
+    // Validate required fields
+    if (!linkTitle || !linkUrl) {
+      alert('Please enter a title and URL');
+      return;
+    }
+
+    // Basic URL validation
+    try {
+      new URL(linkUrl);
+    } catch (e) {
+      alert('Please enter a valid URL (including http:// or https://)');
+      return;
+    }
+
     if (sectionId === '__new__') {
       const sectionName = modal.querySelector('#modal-section-name').value.trim();
       const sectionEmoji = modal.querySelector('#modal-section-emoji').value.trim() || '⭐';
       if (!sectionName) { alert('Please enter a section name'); return; }
-      
+
       const newSection = {
         id: 'custom-' + Date.now(),
         name: sectionName,
@@ -528,7 +548,7 @@ function showAddLinkModal(title, url) {
       const section = customSections.find(s => s.id === sectionId);
       if (section) section.links.push({ title: linkTitle, url: linkUrl });
     }
-    
+
     chrome.storage.sync.set({ customSections });
     renderCustomSections();
     applySectionOrder();
