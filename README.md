@@ -104,6 +104,9 @@ Access the settings panel to configure:
 - **Manage Sections** - Show/hide default sections based on your needs
 - Reset section order
 
+### 📚 Add Links to Browser Bookmarks
+Just want to take the links and run? Add all links currently in the extension to your browser bookmarks in one click by clicking the Settings Cog (⚙️) and selecting "Add all current links to browser bookmarks".
+
 ![Manage Sections](screenshots/manage-sections.png)
 
 ## 📥 Installation

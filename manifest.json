@@ -3,7 +3,7 @@
   "name": "M365 Admin Quick Links",
   "version": "1.0.0",
   "description": "Quick access to essential Microsoft 365 and Power Platform admin portals",
-  "permissions": ["storage", "sidePanel", "tabs"],
+  "permissions": ["storage", "sidePanel", "tabs", "bookmarks"],
   "background": {
     "service_worker": "background.js"
   },

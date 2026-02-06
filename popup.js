@@ -208,6 +208,74 @@ if ($btnWalkthrough) {
   });
 }
 
+// Add all links to bookmarks
+const $btnAddBookmarks = document.getElementById('btn-add-bookmarks');
+if ($btnAddBookmarks) {
+  $btnAddBookmarks.addEventListener('click', async () => {
+    try {
+      // Get the bookmarks/favorites bar ID (Chrome: "Bookmarks Bar", Edge: "Favorites bar")
+      const bookmarkTree = await chrome.bookmarks.getTree();
+      const bookmarksBar = bookmarkTree[0].children.find(c => 
+        c.title === 'Bookmarks Bar' || 
+        c.title === 'Bookmarks bar' || 
+        c.title === 'Favorites bar' || 
+        c.title === 'Favorites Bar' ||
+        c.id === '1'
+      );
+      const parentId = bookmarksBar ? bookmarksBar.id : '1';
+      
+      // Check if folder already exists
+      const existingFolders = await chrome.bookmarks.search({ title: 'M365 Admin Quick Links' });
+      let rootFolder;
+      
+      if (existingFolders.length > 0 && existingFolders.find(f => f.parentId === parentId)) {
+        // Remove existing folder to replace it
+        const existing = existingFolders.find(f => f.parentId === parentId);
+        await chrome.bookmarks.removeTree(existing.id);
+      }
+      
+      // Create the root folder
+      rootFolder = await chrome.bookmarks.create({
+        parentId: parentId,
+        title: 'M365 Admin Quick Links'
+      });
+      
+      // Get all visible sections in their current order
+      const sections = document.querySelectorAll('.link-group');
+      
+      for (const section of sections) {
+        // Skip hidden sections
+        if (section.style.display === 'none') continue;
+        
+        // Get section title (remove drag handle)
+        const h2 = section.querySelector('h2');
+        const sectionTitle = h2.textContent.replace('⋮⋮', '').trim();
+        
+        // Create subfolder for this section
+        const subFolder = await chrome.bookmarks.create({
+          parentId: rootFolder.id,
+          title: sectionTitle
+        });
+        
+        // Get all links in this section
+        const links = section.querySelectorAll('ul li a');
+        for (const link of links) {
+          await chrome.bookmarks.create({
+            parentId: subFolder.id,
+            title: link.textContent,
+            url: link.href
+          });
+        }
+      }
+      
+      alert('Bookmarks created successfully! Check your Bookmarks Bar for "M365 Admin Quick Links" folder.');
+    } catch (error) {
+      console.error('Error creating bookmarks:', error);
+      alert('Error creating bookmarks: ' + error.message);
+    }
+  });
+}
+
 // Manage Sections
 $btnManageSections.addEventListener('click', () => {
   showManageSectionsModal();
