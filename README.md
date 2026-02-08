@@ -37,7 +37,7 @@ Instant access to essential Microsoft admin portals organized by category:
 | Microsoft 365 Admin Center | https://admin.microsoft.com |
 | Microsoft Entra Admin Center | https://entra.microsoft.com |
 | Microsoft 365 Defender | https://security.microsoft.com |
-| Microsoft Purview (Compliance) | https://purview.microsoft.com/home |
+| Microsoft Purview (Compliance) | https://purview.microsoft.com |
 | Exchange Admin Center | https://admin.exchange.microsoft.com |
 | Teams Admin Center | https://admin.teams.microsoft.com |
 | OneDrive Admin Center | https://admin.onedrive.com |
@@ -70,7 +70,7 @@ Instant access to essential Microsoft admin portals organized by category:
 | Connector Reference | https://learn.microsoft.com/en-us/connectors/connector-reference/ |
 | Power Platform Docs | https://learn.microsoft.com/en-us/power-platform/ |
 | Microsoft Graph Docs | https://learn.microsoft.com/en-us/graph/ |
-| Service Health Status | https://status.office.com |
+| Microsoft 365 Service Health | https://admin.microsoft.com/Adminportal/Home#/servicehealth |
 
 #### 🤖 Copilot
 | Link | URL |
